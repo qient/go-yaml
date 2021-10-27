@@ -534,6 +534,8 @@ func (d *Decoder) canDecodeByUnmarshaler(dst reflect.Value) bool {
 		return true
 	case BytesUnmarshaler:
 		return true
+	case InterfaceUnmarshalerContextNode:
+		return true
 	case InterfaceUnmarshalerContext:
 		return true
 	case InterfaceUnmarshaler:
@@ -562,6 +564,13 @@ func (d *Decoder) decodeByUnmarshaler(ctx context.Context, dst reflect.Value, sr
 
 	if unmarshaler, ok := iface.(BytesUnmarshaler); ok {
 		if err := unmarshaler.UnmarshalYAML(d.unmarshalableDocument(src)); err != nil {
+			return errors.Wrapf(err, "failed to UnmarshalYAML")
+		}
+		return nil
+	}
+
+	if unmarshaler, ok := iface.(InterfaceUnmarshalerContextNode); ok {
+		if err := unmarshaler.UnmarshalYAML(ctx, src); err != nil {
 			return errors.Wrapf(err, "failed to UnmarshalYAML")
 		}
 		return nil

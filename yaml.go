@@ -56,6 +56,11 @@ type InterfaceUnmarshalerContext interface {
 	UnmarshalYAML(context.Context, func(interface{}) error) error
 }
 
+// InterfaceUnmarshalerContextNode interface use InterfaceUnmarshaler with context.Context and ast.Node.
+type InterfaceUnmarshalerContextNode interface {
+	UnmarshalYAML(context.Context, ast.Node) error
+}
+
 // MapItem is an item in a MapSlice.
 type MapItem struct {
 	Key, Value interface{}
