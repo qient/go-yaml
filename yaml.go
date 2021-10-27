@@ -58,7 +58,7 @@ type InterfaceUnmarshalerContext interface {
 
 // InterfaceUnmarshalerContextNode interface use InterfaceUnmarshaler with context.Context and ast.Node.
 type InterfaceUnmarshalerContextNode interface {
-	UnmarshalYAML(context.Context, ast.Node) error
+	UnmarshalYAML(context.Context, *Decoder, ast.Node) error
 }
 
 // MapItem is an item in a MapSlice.
