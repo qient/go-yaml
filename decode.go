@@ -570,7 +570,16 @@ func (d *Decoder) decodeByUnmarshaler(ctx context.Context, dst reflect.Value, sr
 	}
 
 	if unmarshaler, ok := iface.(InterfaceUnmarshalerContextNode); ok {
-		if err := unmarshaler.UnmarshalYAML(ctx, d, src); err != nil {
+		if err := unmarshaler.UnmarshalYAML(ctx, src, func(v interface{}) error {
+			rv := reflect.ValueOf(v)
+			if rv.Type().Kind() != reflect.Ptr {
+				return errors.ErrDecodeRequiredPointerType
+			}
+			if err := d.decodeValue(ctx, rv.Elem(), src); err != nil {
+				return errors.Wrapf(err, "failed to decode value")
+			}
+			return nil
+		}); err != nil {
 			return errors.Wrapf(err, "failed to UnmarshalYAML")
 		}
 		return nil
